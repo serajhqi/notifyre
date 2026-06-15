@@ -50,3 +50,8 @@ func (s *KeyStore) Valid(key string) bool {
 func (s *KeyStore) Label(key string) string {
 	return s.lookup[key]
 }
+
+// NewKeyStore creates a KeyStore with predefined keys (for testing).
+func NewKeyStore(validKeys map[string]string) *KeyStore {
+	return &KeyStore{lookup: validKeys}
+}

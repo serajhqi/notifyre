@@ -7,21 +7,24 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	keyspkg "notifyre/internal/keys"
+	"notifyre/internal/telegram"
 )
 
 // mockSender implements TelegramSender for tests.
 type mockSender struct {
-	lastReq SendRequest
+	lastReq telegram.SendRequest
 	err     error
 }
 
-func (m *mockSender) Send(req SendRequest) error {
+func (m *mockSender) Send(req telegram.SendRequest) error {
 	m.lastReq = req
 	return m.err
 }
 
 func TestSendHandler_MissingAPIKey(t *testing.T) {
-	store := &KeyStore{lookup: map[string]string{"valid": "svc"}}
+	store := keyspkg.NewKeyStore(map[string]string{"valid": "svc"})
 	mock := &mockSender{}
 	h := sendHandler(store, mock)
 
@@ -36,7 +39,7 @@ func TestSendHandler_MissingAPIKey(t *testing.T) {
 }
 
 func TestSendHandler_WrongAPIKey(t *testing.T) {
-	store := &KeyStore{lookup: map[string]string{"valid": "svc"}}
+	store := keyspkg.NewKeyStore(map[string]string{"valid": "svc"})
 	mock := &mockSender{}
 	h := sendHandler(store, mock)
 
@@ -52,7 +55,7 @@ func TestSendHandler_WrongAPIKey(t *testing.T) {
 }
 
 func TestSendHandler_EmptyMessage(t *testing.T) {
-	store := &KeyStore{lookup: map[string]string{"valid": "svc"}}
+	store := keyspkg.NewKeyStore(map[string]string{"valid": "svc"})
 	mock := &mockSender{}
 	h := sendHandler(store, mock)
 
@@ -68,7 +71,7 @@ func TestSendHandler_EmptyMessage(t *testing.T) {
 }
 
 func TestSendHandler_TelegramError(t *testing.T) {
-	store := &KeyStore{lookup: map[string]string{"valid": "svc"}}
+	store := keyspkg.NewKeyStore(map[string]string{"valid": "svc"})
 	mock := &mockSender{err: errors.New("bot blocked")}
 	h := sendHandler(store, mock)
 
@@ -84,7 +87,7 @@ func TestSendHandler_TelegramError(t *testing.T) {
 }
 
 func TestSendHandler_OK(t *testing.T) {
-	store := &KeyStore{lookup: map[string]string{"valid": "svc"}}
+	store := keyspkg.NewKeyStore(map[string]string{"valid": "svc"})
 	mock := &mockSender{}
 	h := sendHandler(store, mock)
 

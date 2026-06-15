@@ -9,11 +9,13 @@ import (
 
 	"github.com/spf13/cobra"
 	"notifyre/internal/config"
+	keyspkg "notifyre/internal/keys"
+	"notifyre/internal/telegram"
 )
 
 // TelegramSender is satisfied by TelegramClient and can be mocked in tests.
 type TelegramSender interface {
-	Send(req SendRequest) error
+	Send(req telegram.SendRequest) error
 }
 
 type apiResponse struct {
@@ -29,14 +31,14 @@ func writeJSON(w http.ResponseWriter, status int, v any) {
 	}
 }
 
-func sendHandler(keys *KeyStore, tg TelegramSender) http.HandlerFunc {
+func sendHandler(keys *keyspkg.KeyStore, tg TelegramSender) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		apiKey := r.Header.Get("X-API-Key")
 		if !keys.Valid(apiKey) {
 			writeJSON(w, http.StatusUnauthorized, apiResponse{Error: "invalid api key"})
 			return
 		}
-		var req SendRequest
+		var req telegram.SendRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			writeJSON(w, http.StatusBadRequest, apiResponse{Error: "invalid request body"})
 			return
@@ -66,11 +68,11 @@ func runServe(_ *cobra.Command, _ []string) error {
 	if err != nil {
 		return err
 	}
-	keys, err := LoadKeys(cfg.KeysFile)
+	keys, err := keyspkg.LoadKeys(cfg.KeysFile)
 	if err != nil {
 		return err
 	}
-	tg, err := NewTelegramClient(cfg.BotToken, cfg.Channel, cfg.ProxyAddr)
+	tg, err := telegram.NewTelegramClient(cfg.BotToken, cfg.Channel, cfg.ProxyAddr)
 	if err != nil {
 		return err
 	}

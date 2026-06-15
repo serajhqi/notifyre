@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/spf13/cobra"
+	"notifyre/internal/telegram"
 )
 
 func newSendCmd() *cobra.Command {
@@ -25,7 +26,7 @@ func newSendCmd() *cobra.Command {
 		Use:   "send",
 		Short: "Send a notification via the running notifyre server",
 		RunE: func(_ *cobra.Command, _ []string) error {
-			req := SendRequest{
+			req := telegram.SendRequest{
 				Message:             message,
 				Title:               title,
 				Level:               level,
