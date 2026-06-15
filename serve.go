@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/spf13/cobra"
+	"notifyre/internal/config"
 )
 
 // TelegramSender is satisfied by TelegramClient and can be mocked in tests.
@@ -61,7 +62,7 @@ func newServeCmd() *cobra.Command {
 }
 
 func runServe(_ *cobra.Command, _ []string) error {
-	cfg, err := LoadConfig()
+	cfg, err := config.LoadConfig()
 	if err != nil {
 		return err
 	}
