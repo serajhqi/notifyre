@@ -1,0 +1,23 @@
+# Git
+.git/
+.gitignore
+
+# Docs
+docs/
+*.md
+
+# Built binary (rebuilt inside Docker)
+notifyre
+
+# Secrets
+.env
+.env.*
+keys.yaml
+keys.yml
+
+# Editor
+.idea/
+.vscode/
+
+# Tests
+*_test.go

@@ -1,0 +1,14 @@
+services:
+  notifyre:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8080}:8080"
+    environment:
+      BOT_TOKEN: ${BOT_TOKEN}
+      CHANNEL: ${CHANNEL}
+      KEYS_FILE: /run/secrets/keys.yaml
+      PROXY_ADDR: ${PROXY_ADDR:-}
+      PORT: 8080
+    volumes:
+      - ./keys.yaml:/run/secrets/keys.yaml:ro
