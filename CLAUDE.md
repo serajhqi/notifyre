@@ -6,14 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Build
-go build -o notifyre .
+go build -o notifyre ./cmd/notifyre/
 
 # Test all
 go test ./...
 
 # Test single package/file
-go test -run TestRenderMessage .
-go test -run TestSendHandler .
+go test -run TestRenderMessage ./internal/telegram
+go test -run TestSendHandler ./cmd/notifyre
 
 # Lint (uses go vet)
 go vet ./...
@@ -21,11 +21,12 @@ go vet ./...
 
 ## Architecture
 
-Single Go binary (`package main`) with three Cobra subcommands, all in the repo root:
+Single Go binary (`package main` in `cmd/notifyre/`) with three Cobra subcommands. Library logic in `internal/config`, `internal/keys`, and `internal/telegram` packages.
 
-- **`serve`** — starts the HTTP server (`serve.go`). Loads config from env vars, loads API keys from YAML, creates a `TelegramClient`, registers `POST /send`.
-- **`send`** — thin CLI client that POSTs to a running server (`send.go`). No server-side logic.
-- **`snippet`** — prints copy-paste integration code for curl/bash/go/node/python (`snippet.go`).
+- **`cmd/notifyre/`** — commands: `main.go` (cobra root), `serve.go` (HTTP server), `send.go` (CLI client), `snippet.go` (code snippets)
+- **`internal/config/`** — `Config` struct, `LoadConfig()` validates required env vars
+- **`internal/keys/`** — `KeyStore` type, YAML keys file parsing
+- **`internal/telegram/`** — `TelegramClient`, `SendRequest`, `RenderMessage`
 
 ### Request flow
 
