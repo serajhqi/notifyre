@@ -5,7 +5,7 @@
 .env
 .env.*
 !.env.example
-
+/graphify-out
 # Keys file (contains secrets)
 keys.yaml
 keys.yml
