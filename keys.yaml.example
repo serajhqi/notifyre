@@ -1,0 +1,9 @@
+keys:
+  - key: "abc123secret456"
+    label: "service-a"
+  - key: "xyz789secret012"
+    label: "service-b"
+  - key: "def456secret789"
+    label: "ci-pipeline"
+  - key: "ghi012secret345"
+    label: "backup-job"
